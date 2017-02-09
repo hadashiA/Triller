@@ -55,7 +55,8 @@ public class BlockEntity : MonoBehaviour
                 var newPosition = t.localPosition + new Vector3(0f, -Dig.Field.FallSpeed * Time.deltaTime);
                 var bottomEdge = newPosition + Field.DownOffset;
                 var bottomCoord = Dig.Field.GetCoord(bottomEdge);
-                if (Dig.Field.CanFall(bottomCoord))
+
+                if (Dig.Field.AllowFallWithGroup(lastCoord))
                 {
                     t.localPosition = newPosition;
                     var coord = Dig.Field.GetCoord(t.localPosition);

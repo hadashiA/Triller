@@ -140,6 +140,17 @@ namespace Models
             return block.Falling || (withItem && block.Color == BlockColor.Imo);
         }
 
+        public bool AllowFallWithGroup(FieldCoord c)
+        {
+            var group = _scanner.Grouping(c);
+            foreach (var member in group)
+            {
+                if (group.Contains(member.Down)) continue;
+                if (!CanFall(member.Down)) return false;
+            }
+            return true;
+        }
+
         public void SetFalling(FieldCoord coord, bool falling)
         {
             var group = _scanner.Grouping(coord);
