@@ -28,7 +28,6 @@ public class PlayerEntity : MonoBehaviour
     float _lastDigTime;
     float _preferredX;
     bool _dead;
-    float _toriAlpha = 1f;
 
     void Start()
     {
@@ -61,21 +60,6 @@ public class PlayerEntity : MonoBehaviour
                 }
             })
             .AddTo(this);
-//
-//        _dead.AsObservable()
-//            .Do(_ =>
-//            {
-//                _renderer.sprite = _crySprite;
-//                var tori = transform.Find("tori_dead");
-//                tori.gameObject.SetActive(true);
-//            })
-//            .SelectMany(_ =>
-//            {
-//                return this.UpdateAsObservable()
-//
-//                    .TakeUntil(Observable.Timer(TimeSpan.FromSeconds(1)));
-//            })
-//            .Subsc
     }
 
     void Update()
@@ -86,15 +70,14 @@ public class PlayerEntity : MonoBehaviour
             var t = transform;
             var tori = t.Find("tori_dead");
             tori.gameObject.SetActive(true);
-            tori.Translate(
-                // UnityEngine.Random.Range(-0.5f, 0.5f),
-                0f,
-                Time.deltaTime * 0.25f,
-                0f);
+            tori.Translate( 0f, Time.deltaTime * 0.25f, 0f);
 
             var toriSprite = tori.GetComponent<SpriteRenderer>();
-            _toriAlpha -= Time.deltaTime * 0.25f;
-            toriSprite.color = new Color(toriSprite.color.r, toriSprite.color.g, toriSprite.color.b, Mathf.Max(0f, _toriAlpha));
+            toriSprite.color = new Color(
+                toriSprite.color.r,
+                toriSprite.color.g,
+                toriSprite.color.b,
+                Mathf.Max(0f, toriSprite.color.a - Time.deltaTime * 0.25f));
         }
     }
 
@@ -167,7 +150,7 @@ public class PlayerEntity : MonoBehaviour
         var newPosition = t.localPosition + new Vector3(0f, -Dig.Field.FallSpeed * Time.deltaTime);
         var bottomEdge = newPosition + Field.DownOffset;
         var bottomCoord = Dig.Field.GetCoord(bottomEdge);
-        if (Dig.Field.CanFall(bottomCoord))
+        if (Dig.Field.CanFall(bottomCoord, true))
         {
             t.localPosition = newPosition;
         }

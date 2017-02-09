@@ -19,5 +19,14 @@ namespace Models
             ClimeTime = settings.ClimeTime;
             DigInterval = settings.DigInterval;
         }
+
+        public void Damage(float p)
+        {
+            Dig.Player.Hp -= p;
+            if (Dig.Player.Hp <= 0)
+            {
+                Dig.Player.Hp = 0f;
+            }
+        }
     }
 }

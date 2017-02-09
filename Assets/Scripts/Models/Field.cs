@@ -131,11 +131,13 @@ namespace Models
             return IsEmpty(coord) || IsItem(coord);
         }
 
-        public bool CanFall(FieldCoord coord)
+        public bool CanFall(FieldCoord coord, bool withItem = false)
         {
             if (CanMove(coord)) return true;
             if (!IsBlock(coord)) return false;
-            return GetBlock(coord).Falling;
+
+            var block = GetBlock(coord);
+            return block.Falling || (withItem && block.Color == BlockColor.Imo);
         }
 
         public void SetFalling(FieldCoord coord, bool falling)

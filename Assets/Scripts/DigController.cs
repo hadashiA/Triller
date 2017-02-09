@@ -27,6 +27,7 @@ public class DigController : MonoBehaviour
 
     readonly Dictionary<int, BlockEntity> _blockEntities = new Dictionary<int, BlockEntity>();
     readonly Subject<FieldCoord> _digSubject = new Subject<FieldCoord>();
+    readonly Subject<Unit> _gameoverSubject = new Subject<Unit>();
     PlayerEntity _playerEntity;
 
     void Awake()
@@ -99,14 +100,7 @@ public class DigController : MonoBehaviour
                 }
             }
         }
-
-        Dig.Player.Hp -= _settings.DamageSpeed * Time.deltaTime);
-        if (Dig.Player.Hp <= 0)
-        {
-            Dig.Player.Hp = 0f;
-        }
-        _hpGauge.fillAmount = Dig.Player.Hp / 100f;
-        _debugPanel.DrawDebugGrid(_fieldTransform);
+        Dig.Player.Damage(_settings.DamageSpeed * Time.deltaTime);
     }
 
     void GameStart()
@@ -220,7 +214,16 @@ public class DigController : MonoBehaviour
             .AddTo(_playerEntity);
 
         this.LateUpdateAsObservable()
-            .Where(_ => Dig.Field != null && !Dig.Field.CanMove(Dig.Player.Coord))
+            .Do(_ => _hpGauge.fillAmount = Dig.Player.Hp / 100f)
+            .Where(_ => Dig.Player.Hp <= 0f)
+            .First()
+            .Do(_ => _playerEntity.Die())
+            .Delay(TimeSpan.FromSeconds(5))
+            .Subscribe(_ => GameStart())
+            .AddTo(_playerEntity);
+
+        this.LateUpdateAsObservable()
+            .Where(_ => !Dig.Field.CanMove(Dig.Player.Coord))
             .First()
             .Do(_ => _playerEntity.Die())
             .Delay(TimeSpan.FromSeconds(5))
