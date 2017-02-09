@@ -101,6 +101,7 @@ public class DigController : MonoBehaviour
             }
         }
         Dig.Player.Damage(_settings.DamageSpeed * Time.deltaTime);
+        _debugPanel.DrawDebugGrid(_fieldTransform);
     }
 
     void GameStart()

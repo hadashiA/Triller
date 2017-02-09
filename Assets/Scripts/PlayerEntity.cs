@@ -180,11 +180,6 @@ public class PlayerEntity : MonoBehaviour
         return _digSubject.AsObservable();
     }
 
-    public IObservable<Unit> AnimateDie()
-    {
-        return Observable.Return(Unit.Default);
-    }
-
     public void Die()
     {
         _dead = true;
